@@ -8,8 +8,7 @@ pipeline {
 
     stages {
         stage('Build') {
-
-            
+         
             steps {
                 sh '''
                     ls -al
@@ -29,6 +28,12 @@ pipeline {
                     npm test
                '''
             }
+        }
+    }
+
+    post {
+        always {
+            junit 'test-results/junit.xml'
         }
     }
 }
