@@ -16,7 +16,7 @@ pipeline {
          
             steps {
                 sh '''
-                    echo '트리커 테스트 중 ...'
+                    echo '트리 테스트 중 ...'
                     ls -al
                     node --version
                     npm --version
@@ -44,7 +44,21 @@ pipeline {
                 '''
             }         
         }
-        stage('Deploy'){
+
+        stage('Deploy staging'){
+            steps{
+                sh '''
+                npm install netlify-cli@20.1.1
+                npx netlify --version
+                echo "프로젝트 스테이징 배포중... 사이트 아이디: $NETLIFY_SITE_ID"
+                npx netlify status
+                npx netlify deploy --dir=build
+                '''
+
+            }
+        }
+
+        stage('Deploy prod'){
             steps{
                 sh '''
                 npm install netlify-cli@20.1.1
