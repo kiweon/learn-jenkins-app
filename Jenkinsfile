@@ -16,6 +16,7 @@ pipeline {
          
             steps {
                 sh '''
+                    echo '트리커 테스트 중 ...'
                     ls -al
                     node --version
                     npm --version
