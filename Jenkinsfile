@@ -50,6 +50,7 @@ pipeline {
                 npx netlify --version
                 echo "프로젝트 배포중... 사이트 아이디: $NETLIFY_SITE_ID"
                 npx netlify status
+                npx netlify deploy --dir=build --prod
                 '''
 
             }
