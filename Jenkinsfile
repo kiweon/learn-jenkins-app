@@ -8,7 +8,9 @@ pipeline {
     }
     */
 
+    // 전역 에이전트를 사용하지 않음으로써 컨테이너 중첩 방지
     agent none
+
     
     environment {
         NETLIFY_SITE_ID = 'f89b61dc-693d-4fcf-9264-0f1749a9c313'
