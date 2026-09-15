@@ -12,36 +12,14 @@ pipeline {
     }
 
     stages {
-
-        stage('AWS') {
-            agent {
-                docker { 
-                    image 'amazon/aws-cli'
-                    // aws-cli 이미지는 기본적으로 실행 후 바로 종료되므로 엔트리포인트 무력화
-                    args "--entrypoint=''" 
-                }
-            }
-
-            environment {
-                AWS_S3_BUCKET = 'skw-learn-jenkins'
-            }
-
-            steps {
-
-                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh '''
-                    aws --version
-                    echo "Hello AWS S3!" > index2.html
-                    aws s3 cp index2.html s3://$AWS_S3_BUCKET/index2.html
-                    '''
-                }               
-            }
-
-        }
+        
         stage('Build') {
 
             agent {
-                docker { image 'mcr.microsoft.com/playwright:v1.39.0-jammy' }
+                docker {
+                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                     reuseNode true
+                     }
             }
 
             steps {
@@ -56,6 +34,33 @@ pipeline {
                 '''
             }
         }
+
+        stage('AWS') {
+            agent {
+                docker { 
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    // aws-cli 이미지는 기본적으로 실행 후 바로 종료되므로 엔트리포인트 무력화
+                    args "--entrypoint=''" 
+                }
+            }
+
+            environment {
+                AWS_S3_BUCKET = 'skw-learn-jenkins'
+            }
+
+            steps {
+
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                    aws --version
+                    aws s3 sync build s3://$AWS_S3_BUCKET
+                    '''
+                }               
+            }
+
+        }
+
         stage('Test'){
 
             agent {
