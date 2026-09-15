@@ -1,13 +1,5 @@
 pipeline {
-    /*
-    agent {
-        docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
-        }
-    }
-    */
-
+   
     // 전역 에이전트를 사용하지 않음으로써 컨테이너 중첩 방지
 
     
