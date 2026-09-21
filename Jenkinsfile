@@ -7,6 +7,9 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = 'ap-northeast-2'
+        AWS_ECS_CLUSTER = 'busy-deer-618syt'
+        AWS_ECS_SERVICE_PROD = 'LearnJenkinsApp-Service_Prod'
+        AWS_ECS_TD_PROD ='LearnJenkinsApp-TaskDefinition-Prod'
     }
 
    /* 
@@ -37,7 +40,8 @@ pipeline {
                     yum install jq -y
                     LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq '.taskDefinition.revision')
                     echo $LATEST_TD_REVISION
-                    aws ecs update-service --cluster busy-deer-618syt --service LearnJenkinsApp-Service_Prod --task-definition LearnJenkinsApp-TaskDefinition-Prod:2
+                    aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD --task-definition $AWS_ECS_TD_PROD:$LATEST_TD_REVISION
+                    aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --services $AWS_ECS_SERVICE_PROD
                     '''
                 }               
             }
